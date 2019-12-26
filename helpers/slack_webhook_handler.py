@@ -71,6 +71,7 @@ def slack_webhook_handler(payload):
 
     if 'text' not in payload:
         response = print_help('')
+        return { 'user': payload['user_id'][0], 'response': response }
 
     if any( item in payload['text'][0]  for item in valid_payloads ):
 
