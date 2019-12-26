@@ -22,7 +22,8 @@ provider:
   region: us-east-1
   environment:
     SLACK_BOT_TOKEN: xoxb-< slack bot token >
-    GITHUB_SECRET: <github webhook secret>
+    SLACK_APP_SIGNING_SECRET: < Slack App Siging token >
+    GITHUB_SECRET: < github webhook secret >
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
   iamRoleStatements:
     - Effect: Allow
