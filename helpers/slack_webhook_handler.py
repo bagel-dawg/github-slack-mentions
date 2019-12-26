@@ -9,48 +9,36 @@ def print_help(help_type):
     generic_message = "Uh oh! You seem to have mis-typed a command, Here's some help:"
 
     subscribe_message = """
-    ### Subscribing to Notifications ###
-    In order to subscribe to your GitHub mentions:
-    `/github-notify subscribe <GitHub Username>`
-
-    Example:
-    `/github-notify subscribe bagel-dawg`
-
+    Subscribing to Notifications:
+    > `/github-notify subscribe <GitHub Username>`
     """
 
     unsubscribe_message = """
-    ### Un-subscribing to Notifications ###
-    In order to unsubscribe to your GitHub mentions:
-    `/github-notify unsubscribe`
-
-    You will be identified by your Slack ID.
-
+    Un-subscribing to Notifications:
+    > `/github-notify unsubscribe`
     """
 
     settings_events_message = """
-    ### Choosing which events to be notified for ###
-    Settings for events include:
-    `/github-notify settings event (enable|disable) (pull_request|issue_comment|pull_request_review)`
+    Opt-out of event types:
+    > `/github-notify settings event (enable|disable) (pull_request|issue_comment|pull_request_review)`
     
-    `pull_request` events will notify you when your username is mentioned in the body of a PR.
-    `issue_comment` events will notify you when your username is mentioned in an issue or PR comment.
-    `pull_request_review` events will notify you when your are added as a PR Approver. You will also be notified 
+    Event Types:
+    > `pull_request`: Your username is mentioned in the body of a PR.
+    > `issue_comment`: Your username is mentioned in an issue or PR comment.
+    > `pull_request_review`: You are added as a PR Approver. You will also be notified 
     if your username is mentioned in a review comment.
 
     """
     settings_blacklist = """
-    ### Blacklist all notifications from defined repositories ###
-    Adding repositories to your blacklist will prevent you from getting notified for any of the events 
-    that occur in that repository.
-
-    Example usage:
-    `/github-notify settings blacklist (add|remove) < organization/repository-name >`
-
+    Mute a specific repository:
+    > `/github-notify settings blacklist (add|remove) < organization/repository-name >`
     """
 
 
     if help_type == 'subscribe':
         help_message = generic_message + subscribe_message
+    elif help_type == 'settings':
+        help_message = generic_message + settings_events_message + settings_blacklist
     elif help_type == 'settings_events':
         help_message = generic_message + settings_events_message
     elif help_type == 'settings_blacklist':
@@ -118,7 +106,7 @@ def slack_webhook_handler(payload):
             else:
                 response = print_help('settings_blacklist')
         else:
-            response = print_help('generic')
+            response = print_help('settings')
     else:
         response = print_help('generic')
 
