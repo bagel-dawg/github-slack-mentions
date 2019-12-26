@@ -4,7 +4,7 @@ from helpers.pull_request_handler import pull_request_handler
 from helpers.issue_comment_handler import issue_comment_handler
 from helpers.pr_review_handler import pr_review_handler
 from helpers.slack_notify import notify_slack
-from helpers.verify_webhook_secret import verify_webhook_secret
+from helpers.verify_webhook_secret import verify_webhook_secret, verify_slack_secret
 from helpers.slack_webhook_handler import slack_webhook_handler
 from helpers.user_management import get_notifiable_users
 
@@ -35,9 +35,12 @@ def lambda_handler(event, context):
 
     if 'X-Slack-Signature' in headers:
         body = parse_qs(event['body'])
-        webhook_response = slack_webhook_handler(body)
 
-        return response_formated(200, { "response_type": "ephemeral", "text": webhook_response['response'] } )
+        if verify_slack_secret(headers['X-Slack-Signature'], headers['X-Slack-Request-Timestamp'],event['body']):
+            webhook_response = slack_webhook_handler(body)
+            return response_formated(200, { "response_type": "ephemeral", "text": webhook_response['response'] } )
+        else:
+            return response_formated(200, { 'message' : 'X-Slack-Signature invalid.' } )
     else:
         body = json.loads(event['body'])
 

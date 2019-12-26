@@ -9,7 +9,7 @@ def print_help(help_type):
     generic_message = "Uh oh! You seem to have mis-typed a command, Here's some help:"
 
     subscribe_message = """
-
+    ### Subscribing to Notifications ###
     In order to subscribe to your GitHub mentions:
     `/github-notify subscribe <GitHub Username>`
 
@@ -19,11 +19,8 @@ def print_help(help_type):
     """
 
     unsubscribe_message = """
-
+    ### Un-subscribing to Notifications ###
     In order to unsubscribe to your GitHub mentions:
-    `/github-notify unsubscribe`
-
-    Example:
     `/github-notify unsubscribe`
 
     You will be identified by your Slack ID.
@@ -31,7 +28,7 @@ def print_help(help_type):
     """
 
     settings_events_message = """
-
+    ### Choosing which events to be notified for ###
     Settings for events include:
     `/github-notify settings event (enable|disable) (pull_request|issue_comment|pull_request_review)`
     
@@ -42,7 +39,7 @@ def print_help(help_type):
 
     """
     settings_blacklist = """
-
+    ### Blacklist all notifications from defined repositories ###
     Adding repositories to your blacklist will prevent you from getting notified for any of the events 
     that occur in that repository.
 
@@ -71,6 +68,9 @@ def slack_webhook_handler(payload):
         'settings',
         'help'
     ]
+
+    if 'text' not in payload:
+        response = print_help('')
 
     if any( item in payload['text'][0]  for item in valid_payloads ):
 
