@@ -18,5 +18,8 @@
   "homepage": "https://github.com/bagel-dawg/github-slack-mentions#readme",
   "dependencies": {
     "serverless-python-requirements": "^5.0.1"
+  },
+  "devDependencies": {
+    "serverless-domain-manager": "^3.3.0"
   }
 }
