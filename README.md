@@ -42,6 +42,8 @@ From your Slack Workspace's settings, create a new App. This app will use both t
 
 Once you've created your slack App and installed it into your workspace, take note of the "Signing Secret" and the "Bot User OAuth Access Token" (under the OAuth & Permissions settings), you will need to place these into your serverless.yml environment variable configuration.
 
+The slash command "Request URL" is the same end point as the GitHub webhook endpoint.
+
 ## Lambda Function environment variables
 
 This table describes the envrionment variables that are used by these lambda functions and their helpers.
