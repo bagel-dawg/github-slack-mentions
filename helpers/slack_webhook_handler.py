@@ -1,7 +1,7 @@
 import re
 import os
 import slack
-from helpers.user_management import import_user, delete_user, modify_blacklist, modify_event
+from helpers.user_management import import_user, delete_user, modify_blacklist, modify_event, modify_reminder_window
 
 def print_help(help_type):
     print('Executing print_help ...')
@@ -20,13 +20,14 @@ def print_help(help_type):
 
     settings_events_message = """
     Opt-out of event types:
-    > `/github-notify settings event (enable|disable) (pull_request|issue_comment|pull_request_review)`
+    > `/github-notify settings events (enable|disable) (pull_request|issue_comment|pull_request_review|pr_reminders)`
     
     Event Types:
     > `pull_request`: Your username is mentioned in the body of a PR.
     > `issue_comment`: Your username is mentioned in an issue or PR comment.
     > `pull_request_review`: You are added as a PR Approver. You will also be notified 
     if your username is mentioned in a review comment.
+    > `pr_reminders`: Daily notifications of PRs that have requested your review.
 
     """
     settings_blacklist = """
@@ -34,17 +35,23 @@ def print_help(help_type):
     > `/github-notify settings blacklist (add|remove) < organization/repository-name >`
     """
 
+    settings_notification_hour = """
+    Set the hour (24-hour, in UTC) of reminder notifications:
+    > `/github-notify settings reminder_time <0-24>`
+    """
 
     if help_type == 'subscribe':
         help_message = generic_message + subscribe_message
     elif help_type == 'settings':
-        help_message = generic_message + settings_events_message + settings_blacklist
+        help_message = generic_message + settings_events_message + settings_blacklist + settings_notification_hour
     elif help_type == 'settings_events':
         help_message = generic_message + settings_events_message
     elif help_type == 'settings_blacklist':
         help_message = generic_message + settings_blacklist
+    elif help_type == 'settings_reminders':
+        help_message = generic_message + settings_notification_hour
     else:
-        help_message = subscribe_message + unsubscribe_message + settings_events_message + settings_blacklist
+        help_message = subscribe_message + unsubscribe_message + settings_events_message + settings_blacklist + settings_notification_hour
 
     return help_message
 
@@ -82,7 +89,7 @@ def slack_webhook_handler(payload):
             response = 'The github account associated with your Slack ID has been unsubscribed from mentions.'
 
         # If settings is called, farm out to usermanagement functions based on what you want
-        elif re.match(r'settings events (enable|disable) (pull_request|issue_comment|pull_request_review)$', payload['text'][0]):
+        elif re.match(r'settings events (enable|disable) (pull_request|issue_comment|pull_request_review|pr_reminders)$', payload['text'][0]):
             
             payload_items = payload['text'][0].split(' ')
         
@@ -105,6 +112,17 @@ def slack_webhook_handler(payload):
                 response = 'Blacklist updated!'
             else:
                 response = print_help('settings_blacklist')
+
+        elif re.match(r'settings reminder_time', payload['text'][0]):            
+            payload_items = payload['text'][0].split(' ')
+
+            if len(payload_items) == 3:
+                state = payload_items[2]
+                modify_reminder_window(payload['user_id'][0], state)
+                response = 'Reminder hour updated!'
+            else:
+                response = print_help('settings_reminders')
+
         else:
             response = print_help('settings')
     else:

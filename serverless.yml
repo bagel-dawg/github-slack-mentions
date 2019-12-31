@@ -8,22 +8,27 @@ custom:
   default_stage: test
   pythonRequirements:
     dockerizePip: non-linux
+    layer: true    
   customDomain:
-    domainName: <custom domain name>
+    domainName: < custom domain name >
     basePath: ''
     stage: ${self:provider.stage}
     createRoute53Record: true    
 
 provider:
   name: aws
-  profile: bageltechnologies
+  profile: default
   runtime: python3.7
   stage: dev
-  region: us-east-1
+  region: us-west-2
+  memorySize: 256
   environment:
     SLACK_BOT_TOKEN: xoxb-< slack bot token >
     SLACK_APP_SIGNING_SECRET: < Slack App Siging token >
     GITHUB_SECRET: < github webhook secret >
+    GH_USERNAME: < GitHub Username >
+    GH_PAT: < GitHub Password or PAT >
+    GH_ORG: < GitHub Organization name >
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
   iamRoleStatements:
     - Effect: Allow
@@ -39,18 +44,35 @@ provider:
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/slack_id"
 
 package:
+  exclude:
+    - node_modules/
+    - tests/
+    - README.md
+    - requirements.txt
+    - package.json
+    - package-lock.json
   include:
+    - helpers/*.py
     - "*.py"
-    - "helpers/*.py"
 
 functions:
   mentions:
+    timeout: 6
     handler: route_requests.lambda_handler
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }   
     events:
       - http:
           path: github-webhook/mentions
           method: post
           integration: lambda-proxy
+  reminders:
+    timeout: 300
+    handler: reminders.lambda_handler
+    layers: 
+      - { Ref: PythonRequirementsLambdaLayer }
+    events:
+      - schedule: rate(1 hour)
           
 resources:
   Resources:

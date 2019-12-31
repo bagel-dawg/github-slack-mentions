@@ -16,3 +16,4 @@ six==1.13.0
 slackclient==2.5.0
 urllib3==1.25.7
 yarl==1.4.2
+PyGithub==1.45

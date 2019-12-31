@@ -1,6 +1,7 @@
 #from dynamodb_json import json_util as json 
 import os
 import boto3
+from datetime import datetime
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ["DYNAMODB_TABLE"])
@@ -13,8 +14,10 @@ def import_user(github_username, slack_id):
         'events_enabled' : {
             'pull_request' : True,
             'issue_comment' : True,
-            'pull_request_review' : True
+            'pull_request_review' : True,
+            'pr_reminders' : True
         },
+        'reminder_window_hour' : 14,
         'repo_blacklist' : []
     }
 
@@ -68,6 +71,21 @@ def modify_event(slack_id, state, event):
             }
         )
 
+def modify_reminder_window(slack_id, notification_hour):
+    print('Executing modify_reminder_window ...')
+    userdata = retrieve_user_by_slack_id(slack_id)
+
+    if userdata['user_exists']:
+        table.update_item( 
+            Key={ 
+                'ghusername': userdata['userdata']['ghusername']
+            },
+            UpdateExpression='SET reminder_window_hour = :state',
+            ExpressionAttributeValues = {
+                ':state': int(notification_hour),
+            }
+        )
+
 def modify_blacklist(slack_id, state, repo):
     print('Executing modify_blacklist...')
     userdata = retrieve_user_by_slack_id(slack_id)
@@ -108,6 +126,10 @@ def get_notifiable_users(users, github_event, repository):
 
         if user_exists:
             if userdata['events_enabled'][github_event] and (repository not in userdata['repo_blacklist']):
-                return_users.append(userdata['slack_id'])
+                if github_event == 'pr_reminders':
+                    if userdata['reminder_window_hour'] == datetime.utcnow().hour:
+                        return_users.append(userdata['slack_id'])
+                else:
+                    return_users.append(userdata['slack_id'])
     
-    return return_users            
+    return return_users
