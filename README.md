@@ -63,4 +63,4 @@ This table describes the envrionment variables that are used by these lambda fun
 
 The truth is, this project is not terribly complex and could be modified to easily support different backends. You could easily put a flask pr django front-end in front of the route_request.py function.
 
-As for replacing the DynamoDB backend, you could modify the functions in (user_management.py)[https://github.com/bagel-dawg/github-slack-mentions/blob/master/helpers/user_management.py] to support any number of database backends.
+As for replacing the DynamoDB backend, you could modify the functions in [user_management.py](https://github.com/bagel-dawg/github-slack-mentions/blob/master/helpers/user_management.py) to support any number of database backends.
