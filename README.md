@@ -1,5 +1,7 @@
 # github-slack-mentions
 
+_*NOTE:*_ This chatbot essentially mimics PullPanda's [Pull Reminders](https://pullreminders.com/) which has now been aqcuired by GitHub. I assume at some point, Pull Reminder's functionality will be implemented natively into the GitHub slack application, but at the time of writing, PullPanda has disabled new signups, and functionality for pull reminders and requests does not exist in the existing slack app.
+
 This chatbot will enable you to receive comment/body mentions of your GitHub username, PR review requests, and reminders for potentially forgotten review requests in your Slack DMs.
 
 The current feature set includes the following:
