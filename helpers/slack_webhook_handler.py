@@ -2,6 +2,9 @@ import re
 import os
 import slack
 from helpers.user_management import import_user, delete_user, modify_blacklist, modify_event, modify_reminder_window
+from helpers import setup_logger
+
+logger = setup_logger()
 
 def print_help(help_type):
     print('Executing print_help ...')

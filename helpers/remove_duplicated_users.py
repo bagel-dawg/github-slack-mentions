@@ -1,4 +1,7 @@
 from helpers.parse_usernames import get_usernames_from_string
+from helpers import setup_logger
+
+logger = setup_logger()
 
 def remove_duplicated_users(previous_body, new_body):
     print('Executing remove_duplicated_users ...')

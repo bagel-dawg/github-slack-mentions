@@ -3,6 +3,9 @@ import hmac
 import os
 import re
 import json
+from helpers import setup_logger
+
+logger = setup_logger()
 
 def verify_webhook_secret(signature, payload):
     print('Executing verify_webhook_secret ...')

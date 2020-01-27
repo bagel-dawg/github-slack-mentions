@@ -1,5 +1,8 @@
 from helpers.parse_usernames import get_usernames_from_string
 from helpers.remove_duplicated_users import remove_duplicated_users
+from helpers import setup_logger
+
+logger = setup_logger()
 
 def issue_comment_handler(body):
     print('Executing issue_comment_handler...')
