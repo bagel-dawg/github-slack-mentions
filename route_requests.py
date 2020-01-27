@@ -7,6 +7,9 @@ from helpers.slack_notify import notify_slack
 from helpers.verify_webhook_secret import verify_webhook_secret, verify_slack_secret
 from helpers.slack_webhook_handler import slack_webhook_handler
 from helpers.user_management import get_notifiable_users
+from helpers import setup_logger
+
+logger = setup_logger()
 
 def response_formated(statusCode, body):
     print('Executing response_formated...')

@@ -2,6 +2,9 @@
 import os
 import boto3
 from datetime import datetime
+from helpers import setup_logger
+
+logger = setup_logger()
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ["DYNAMODB_TABLE"])

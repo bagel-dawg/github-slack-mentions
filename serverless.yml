@@ -30,6 +30,7 @@ provider:
     GH_PAT: < GitHub Password or PAT >
     GH_ORG: < GitHub Organization name >
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    LOG_LEVEL: WARNING
   iamRoleStatements:
     - Effect: Allow
       Action:

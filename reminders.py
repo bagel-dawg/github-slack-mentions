@@ -3,6 +3,9 @@ import os
 from github import Github
 from helpers.slack_notify import notify_slack
 from helpers.user_management import get_notifiable_users
+from helpers import setup_logger
+
+logger = setup_logger()
 
 def lambda_handler(event, context):
     print('Executing lamda_handler...')

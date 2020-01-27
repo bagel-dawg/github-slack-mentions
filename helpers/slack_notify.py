@@ -1,5 +1,8 @@
 import os
 import slack
+from helpers import setup_logger
+
+logger = setup_logger()
 
 def notify_slack(users, message):
     print('Executing notify_slack...')
