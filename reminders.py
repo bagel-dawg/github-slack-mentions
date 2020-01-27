@@ -38,7 +38,7 @@ def lambda_handler(event, context):
         slack_message = """Here's your daily report of open Pull Request reviews! \nYour review has been requested on the following Pull Requests:\n"""
         
         for pr in prs:
-            slack_message = slack_message + """<%s|%s>\n""" % ( pr['pr_title'], pr['pr_link'] )
+            slack_message = slack_message + """<%s|%s> \n""" % ( pr['pr_link'], pr['pr_title'] )
 
         notify_slack( [slack_id], slack_message )
 
