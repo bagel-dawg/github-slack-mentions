@@ -6,7 +6,7 @@ def issue_comment_handler(body):
     notification_users = []
     msg = ''
 
-    comment_poster = body['issue']['user']['login']
+    comment_poster = body['comment']['user']['login']
     html_link = body['issue']['html_url']
     link_title = body['issue']['title']       
     
