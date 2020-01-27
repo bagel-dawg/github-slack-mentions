@@ -18,7 +18,12 @@ def pr_review_handler(body):
         elif body['review']['state'] == 'changes_requested':
             msg = '%s has requested changes on your PR: <%s|%s>' % (reviewer, html_link, link_title)
         elif body['review']['state'] == 'commented':
-            msg = '%s has commented on your PR: <%s|%s>' % (reviewer, html_link, link_title) 
+            
+            # If the user commenting (reviewer) is also the owned of the PR, do not notify user
+            if reviewer == body['pull_request']['user']['login']:
+                notification_users.remove(body['pull_request']['user']['login'])
+            else:
+              msg = '%s has commented on your PR: <%s|%s>' % (reviewer, html_link, link_title) 
 
     if len(notification_users) > 0:
         notify_users = True
