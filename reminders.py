@@ -8,14 +8,17 @@ from helpers import setup_logger
 logger = setup_logger()
 
 def lambda_handler(event, context):
-    print('Executing lamda_handler...')
+    logger.info('Executing lamda_handler...')
     
+  
     GH_USERNAME = os.environ["GH_USERNAME"]
     GH_PAT = os.environ["GH_PAT"]
 
     g = Github(GH_USERNAME, GH_PAT)
 
     org_repos = g.get_organization(os.environ["GH_ORG"]).get_repos()
+
+    logger.debug('Checking the following repos for PRs:\n%s') % org_repos
 
     users_to_notify = {}
 
@@ -25,6 +28,7 @@ def lambda_handler(event, context):
 
         # Find all PRs that are requesting at least one user reviewer
         for pr in open_prs:
+            logger.debug('Checking for assigned PRs in PR %s on repo %s') % ( pr.title, repo.full_name)
             for requested_review in pr.get_review_requests()[0]:
 
                 # Retrieve and check if the retrieved user is notifiable for this type of event

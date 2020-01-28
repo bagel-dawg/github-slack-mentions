@@ -5,7 +5,7 @@ from helpers import setup_logger
 logger = setup_logger()
 
 def issue_comment_handler(body):
-    print('Executing issue_comment_handler...')
+    logger.info('Executing issue_comment_handler...')
     notification_users = []
     msg = ''
 
@@ -13,12 +13,16 @@ def issue_comment_handler(body):
     html_link = body['issue']['html_url']
     link_title = body['issue']['title']       
     
+    logger.debug('Commenter: %s - html_link: %s - Title: %s') ( comment_poster, html_link, link_title )
+
     if body['action'] == 'created':
         # A PR or Issue has a new comment
+        logger.debug('An issue comment was created')
         notification_users = get_usernames_from_string(body['comment']['body'])
         msg = 'You were mentioned in a PR by %s: <%s|%s>' % (comment_poster, html_link, link_title)
     if body['action'] == 'edited' and 'body' in body['changes']:
         # A PR or Issue has an edited comment
+        logger.debug('An issue comment was was edited')
         notification_users = remove_duplicated_users(body['changes']['body']['from'], body['comment']['body'])
         msg = 'You were mentioned in a PR by %s: <%s|%s>' % (comment_poster, html_link, link_title)
     
