@@ -15,7 +15,7 @@ headers = {
 json_string = {
   "action": "review_requested",
   "repository" : {
-    "full_name": "swimlane/ansible"
+    "full_name": "example/ansible"
   },
   "pull_request": {
     "title": "Update README.md",

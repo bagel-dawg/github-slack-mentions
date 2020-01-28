@@ -15,7 +15,7 @@ headers = {
 json_string = {
   "action": "created",
   "repository" : {
-    "full_name": "swimlane/ansible"
+    "full_name": "example/ansible"
   },
   "issue": {
     "html_url": "https://github.com/bageltech/test-repository-1/pull/6",

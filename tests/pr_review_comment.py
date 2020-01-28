@@ -15,7 +15,7 @@ headers = {
 json_string = {
   "action": "submitted",
   "repository" : {
-    "full_name": "swimlane/ansible"
+    "full_name": "example/ansible"
   },
   "review": {
     "state": "commented",
