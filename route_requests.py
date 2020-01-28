@@ -12,7 +12,7 @@ from helpers import setup_logger
 logger = setup_logger()
 
 def response_formated(statusCode, body):
-    print('Executing response_formated...')
+    logger.info('Executing response_formated...')
     response = {}
     headers = {}
     response['statusCode'] = statusCode
@@ -26,28 +26,38 @@ def response_formated(statusCode, body):
 
     response['headers'] = headers
 
-    print('Reponse to return:')
-    print(response)
+    logger.debug('HTTP Response Headres:\n%s') % headers
+    logger.debug('HTTP Reponse:\n%s') % response
 
     return response
 
 
 def lambda_handler(event, context):
-    print('Executing lamda_handler...')
+    logger.info('Executing lamda_handler...')
     headers = event['headers']
 
+    logger.debug('Incomming HTTP Headers:\n%s') % headers
+    logger.debug('Incomming HTTP Body (RAW):\n%s') % event['body']
+
     if 'X-Slack-Signature' in headers:
+        logger.debug('Incoming HTTP header contains X-Slack-Signature, must be from slack..')
+
         body = parse_qs(event['body'])
+        logger.debug('URL Encoded body:\n%s') % body
 
         if verify_slack_secret(headers['X-Slack-Signature'], headers['X-Slack-Request-Timestamp'],event['body']):
+            logger.debug('Slack secret verified! ')
             webhook_response = slack_webhook_handler(body)
             return response_formated(200, { "response_type": "ephemeral", "text": webhook_response['response'] } )
         else:
+            logger.debug('Slack secret invalid, exiting...')
             return response_formated(200, { 'message' : 'X-Slack-Signature invalid.' } )
     else:
         body = json.loads(event['body'])
+        logger.debug('Incomming HTTP Body (JSON):\n%s') % body
 
     if not verify_webhook_secret(headers['X-Hub-Signature'], body):
+        logger.debug('Github signature invalid, exiting...') 
         return response_formated(403, { 'message' : 'X-Hub-Signature invalid.' } )
 
     if headers['X-GitHub-Event'] == 'pull_request':
@@ -59,10 +69,12 @@ def lambda_handler(event, context):
     elif headers['X-GitHub-Event'] == 'pull_request_review':
         handler_response = pr_review_handler(body)
     else:
+        logger.debug('X-GitHub-Event doesnt contain an actionable event, exiting...')
         return response_formated(200, { 'message' : 'Invalid event, no notifications sent.' } )
 
 
     if handler_response['notify_users']:
+        logger.debug('Users mentioned in event:\n%s') % handler_response['notification_users']
         notifiable_users = get_notifiable_users(handler_response['notification_users'], headers['X-GitHub-Event'], body['repository']['full_name'])
 
         if len(notifiable_users) > 0:
@@ -72,8 +84,10 @@ def lambda_handler(event, context):
         else:
             status_code = 200
             post_response = 'No users to notify'
+            logger.debug('No users to notify from this event, exiting..')
     else:
         status_code = 200
         post_response = 'No users to notify'
+        logger.debug('No users to notify from this event, exiting..')
 
     return response_formated(status_code, post_response)
